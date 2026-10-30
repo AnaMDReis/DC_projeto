@@ -1,3 +1,5 @@
+### Tabela de estado dos requisitos ###
+
 | Req. | Descrição abreviada | Estado | Evidência de validação |
 | :--- | :--- | :--- | :--- |
 | RF1 | Aquisição periódica DHT20 | em curso | |
