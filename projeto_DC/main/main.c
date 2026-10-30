@@ -4,8 +4,8 @@
 #include "freertos/message_buffer.h"
 #include "esp_log.h"
 
-#include "sensor.h"
-#include "storage.h"
+#include "sensor/sensor.h"
+#include "storage/storage.h"
 
 static const char *TAG = "main";
 

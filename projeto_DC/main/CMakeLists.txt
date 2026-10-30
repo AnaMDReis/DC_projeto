@@ -6,10 +6,14 @@
 idf_component_register(
     SRCS 
         "main.c" 
-        "sensor.c" 
-        "storage.c"
+        "sensor/sensor.c" 
+        "storage/storage.c"
+        "led/led.c"
     INCLUDE_DIRS 
         "."
+        "sensor"
+        "storage"
+        "led"
     REQUIRES 
         esp_driver_i2c       # Para <driver/i2c_master.h>
         esp_driver_spi       # Para <driver/spi_master.h>
