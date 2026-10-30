@@ -12,7 +12,7 @@
 
 **Verificações efetuadas.** Projeto compilado sem erros. Ainda não foram feitos testes funcionais em hardware nem medições.
 
-**Divisão de trabalho.** 125305: módulo de armazenamento em microSD (`storage.c`), ADR 001 e 002 e tabela de estado dos requisitos. 126541: aquisição do sensor DHT20 (`sensor.c`) e controlo do LED RGB (`led_status.c`).
+**Divisão de trabalho.** 125305: módulo de armazenamento em microSD (`storage.c`), ADR 001 e 002 e tabela de estado dos requisitos. 126541: aquisição do sensor DHT20 (`sensor.c`), controlo do LED RGB (`led_status.c`) e criação do diagrama ADR.
 
 **Utilização de ferramentas de geração assistida.** Utilização de um assistente para revisão de código 
 
