@@ -1,6 +1,6 @@
 | Req. | Descrição abreviada | Estado | Evidência de validação |
 | :--- | :--- | :--- | :--- |
-| RF1 | Aquisição periódica DHT20 | não iniciado | |
+| RF1 | Aquisição periódica DHT20 | em curso | |
 | RF2 | Visualização no TFT | não iniciado | |
 | RF3 | Indicação de estado através do LED RGB | em curso | |
 | RF4 | Registo das leituras e do log no microSD | em curso | |
