@@ -14,8 +14,8 @@
 #include "sensor.h"
 
 #define MOUNT_POINT         "/sdcard"
-#define DATA_FILE_PATH      MOUNT_POINT "/dht20.csv"
-#define LOG_FILE_PATH       MOUNT_POINT "/oper_log.log"
+#define DATA_FILE_PATH      MOUNT_POINT "/leitura.txt"
+#define LOG_FILE_PATH       MOUNT_POINT "/log.txt"
 
 #define PIN_NUM_MISO 20
 #define PIN_NUM_MOSI 19
@@ -23,31 +23,52 @@
 #define PIN_NUM_CS   18
 #define BOOT_BUTTON_GPIO 9
 
-static const char *TAG = "storage_module";
+static const char *TAG = "Storage";
 static sdmmc_card_t *card = NULL;
 
+
+
+// Configuração da montagem do sistema de ficheiros FAT do cartão
 esp_err_t init_sd_card(void) {
+
+    esp_err_t ret;
+
     esp_vfs_fat_sdmmc_mount_config_t mount_config = {
-        .format_if_mount_failed = false,
-        .max_files = 5,
+#ifdef CONFIG_EXAMPLE_FORMAT_IF_MOUNT_FAILED        // Se estiver ativada
+        .format_if_mount_failed = true,             // Se a montagem falhar o cartão pode ser formatado
+#else                                               // Se não estiver ativada
+        .format_if_mount_failed = false,            // Se a montagem falhar não pode ser formatado
+#endif  // EXAMPLE_FORMAT_IF_MOUNT_FAILED
+        .max_files = 5,     
         .allocation_unit_size = 16 * 1024
     };
 
-    sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = PIN_NUM_MOSI,
-        .miso_io_num = PIN_NUM_MISO,
-        .sclk_io_num = PIN_NUM_CLK,
+
+    sdmmc_host_t host = SDSPI_HOST_DEFAULT();       // Configuração pré-definida do controlador SPI para comunicação com o cartão
+    spi_bus_config_t bus_cfg = {                    // Configuração dos pinos e dos parâmetros do barramento SPI
+        .mosi_io_num = PIN_NUM_MOSI,                
+        .miso_io_num = PIN_NUM_MISO,                 
+        .sclk_io_num = PIN_NUM_CLK,                 
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
         .max_transfer_sz = 4000,
     };
 
-    if (spi_bus_initialize(host.slot, &bus_cfg, SDSPI_DEFAULT_DMA) != ESP_OK) return ESP_FAIL;
 
-    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    slot_config.gpio_cs = PIN_NUM_CS;
-    slot_config.host_id = host.slot;
+    
+    ret = spi_bus_initialize(host.slot, &bus_cfg, SDSPI_DEFAULT_DMA);   // Inicializa o SPI
+    if (ret != ESP_OK) {                                                // Verifica se houve algum erro a inicializar o barramento
+        ESP_LOGE(TAG, "Failed to initialize bus.");
+        return ret;                                                     // se houver devolve o código do erro
+    }   
+
+    // Configuração do dispotisitivo SD no barramento
+    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();  
+    slot_config.gpio_cs = PIN_NUM_CS;                                   
+    slot_config.host_id = host.slot;                                    
+
+
+//------------------------ Tenho de meter os ESP_LOGE neste ficheiro ------------------------//
 
     if (esp_vfs_fat_sdspi_mount(MOUNT_POINT, &host, &slot_config, &mount_config, &card) != ESP_OK) {
         spi_bus_free(host.slot);

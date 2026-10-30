@@ -6,13 +6,15 @@
 idf_component_register(
     SRCS 
         "main.c" 
-        "sd_card.c" 
-        "DHT20_sensor.c"   # <--- confirma se é dht20_sensor.c ou DHT20_sensor.c
+        "sensor.c" 
+        "storage.c"
     INCLUDE_DIRS 
         "."
     REQUIRES 
-        esp_driver_i2c
-        esp_driver_spi
-        fatfs
-        esp_timer
+        esp_driver_i2c       # Para <driver/i2c_master.h>
+        esp_driver_spi       # Para <driver/spi_master.h>
+        esp_driver_gpio      # Para <driver/gpio.h>
+        fatfs                # Para <esp_vfs_fat.h> e <sdmmc_cmd.h>
+        freertos             # Para <freertos/FreeRTOS.h> e <freertos/message_buffer.h>
+        log                  # Para <esp_log.h>
 )
