@@ -3,11 +3,12 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/message_buffer.h"
+#include "esp_err.h"
 
-#include "led_status.h"
+#include "led.h"
 #include "storage.h"
 #include "sensor.h"
-#include "config.h"
+#include "config/config.h"
 
 static const char *TAG = "main";
 

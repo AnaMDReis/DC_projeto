@@ -1,6 +1,6 @@
-#include "led_status.h"
-#include "led_strip.h"
+#include "led.h"
 #include "esp_log.h"
+#include "led_strip.h"
 
 static const char *TAG = "led_status";
 static led_strip_handle_t led_strip = NULL;
@@ -39,25 +39,25 @@ void led_status_set(system_status_t status) {
     switch (status) {
         case ESTADO_NORMAL:
             // Verde 
-            led_strip_set_pixel(led_strip, 0, 0, 30, 0);
+            led_strip_set_pixel(led_strip, 0, 0, 10, 0);
             ESP_LOGI(TAG, "Estado LED: NORMAL (Verde)");
             break;
 
         case ESTADO_ERRO:
             // Vermelho 
-            led_strip_set_pixel(led_strip, 0, 30, 0, 0);
+            led_strip_set_pixel(led_strip, 0, 10, 0, 0);
             ESP_LOGW(TAG, "Estado LED: ERRO (Vermelho)");
             break;
 
         case ESTADO_TRANSMISSAO:
             // Amarelo -> Vermelho + Verde 
-            led_strip_set_pixel(led_strip, 0, 30, 30, 0);
+            led_strip_set_pixel(led_strip, 0, 10, 10, 0);
             ESP_LOGI(TAG, "Estado LED: TRANSMISSÃO (Amarelo)");
             break;
 
         case ESTADO_PROVISIONAMENTO:
             // Azul 
-            led_strip_set_pixel(led_strip, 0, 0, 0, 30);
+            led_strip_set_pixel(led_strip, 0, 0, 0, 10);
             ESP_LOGI(TAG, "Estado LED: PROVISIONAMENTO (Azul)");
             break;
 

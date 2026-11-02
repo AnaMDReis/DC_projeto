@@ -8,7 +8,7 @@ typedef struct {
     float humidity;
 } sample_t;
 
-
+void init_dht20_i2c(void);
 void sensor_task(void *arg);
 
 #endif

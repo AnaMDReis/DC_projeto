@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/message_buffer.h"
-#include "config.h"
+#include "config/config.h"
 
 // Configuração I2C para o DHT20
 #define I2C_MASTER_SCL_IO           7

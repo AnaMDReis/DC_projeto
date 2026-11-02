@@ -9,11 +9,13 @@ idf_component_register(
         "sensor/sensor.c" 
         "storage/storage.c"
         "led/led.c"
+        "config/config.c"
     INCLUDE_DIRS 
         "."
         "sensor"
         "storage"
         "led"
+        "config"
     REQUIRES 
         esp_driver_i2c       # Para <driver/i2c_master.h>
         esp_driver_spi       # Para <driver/spi_master.h>
