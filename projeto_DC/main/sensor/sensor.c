@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/message_buffer.h"
+#include "config.h"
 
 // Configuração I2C para o DHT20
 #define I2C_MASTER_SCL_IO           7
@@ -59,7 +60,7 @@ void sensor_task(void *arg) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     while (1) {
-        if (xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000)) == pdFALSE) {
+        if (xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(config_get_sample_period_s() * 1000)) == pdFALSE) {
             ESP_LOGW(TAG, "Período da tarefa de sensor excedido!");
         }
 

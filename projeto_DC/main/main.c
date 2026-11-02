@@ -1,45 +1,50 @@
 #include <stdio.h>
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/message_buffer.h"
-#include "esp_log.h"
 
-#include "sensor/sensor.h"
-#include "storage/storage.h"
+#include "led_status.h"
+#include "storage.h"
+#include "sensor.h"
+#include "config.h"
 
 static const char *TAG = "main";
 
-// Tamanho do MessageBuffer em bytes (suporta várias estruturas sample_t)
-#define MSG_BUFFER_SIZE_BYTES (sizeof(sample_t) * 10)
+// Cada mensagem ocupa sizeof(sample_t) + sizeof(size_t) de cabeçalho do Message Buffer
+#define MSG_BUFFER_DEPTH   10
+#define MSG_BUFFER_BYTES   (MSG_BUFFER_DEPTH * (sizeof(sample_t) + sizeof(size_t)))
 
-void app_main(void)
-{
-    ESP_LOGI(TAG, "A iniciar a aplicacao...");
+void app_main(void) {
+    // 1. LED primeiro, para sinalizar o estado desde o arranque
+    led_status_init();
 
-    // 1. Criar o MessageBuffer do FreeRTOS
-    MessageBufferHandle_t msg_buffer = xMessageBufferCreate(MSG_BUFFER_SIZE_BYTES);
+    // 2. Montar o cartão SD (necessário antes de ler a configuração)
+    esp_err_t sd_ret = init_sd_card();
+    if (sd_ret != ESP_OK) {
+        ESP_LOGE(TAG, "Cartão SD indisponível (%s)", esp_err_to_name(sd_ret));
+        led_status_set(ESTADO_ERRO);
+    }
+
+    // 3. Ler a configuração. Se o cartão ou o ficheiro faltarem, usa o valor por omissão
+    config_load("/sdcard/config.json");
+
+    // 4. Message Buffer entre aquisição e gravação
+    MessageBufferHandle_t msg_buffer = xMessageBufferCreate(MSG_BUFFER_BYTES);
     if (msg_buffer == NULL) {
-        ESP_LOGE(TAG, "Falha ao criar o MessageBuffer!");
+        ESP_LOGE(TAG, "Falha ao criar o Message Buffer");
+        led_status_set(ESTADO_ERRO);
         return;
     }
 
-    // 2. Inicializar o Botao BOOT (para descarte seguro do SD se necessario)
-    init_boot_button();
+    // 5. Sensor
+    init_dht20_i2c();
+    xTaskCreate(sensor_task, "sensor_task", 4096, msg_buffer, 5, NULL);
 
-    // 3. Inicializar o cartao microSD
-    if (init_sd_card() != ESP_OK) {
-        ESP_LOGE(TAG, "Falha ao inicializar/montar o cartao SD. A continuar sem SD...");
+    // 6. Gravação no cartão (só se o cartão estiver montado)
+    if (sd_ret == ESP_OK) {
+        xTaskCreate(logger_task, "logger_task", 4096, msg_buffer, 4, NULL);
     }
 
-    // 4. Inicializar o barramento I2C e o sensor DHT20
-    init_dht20_i2c();
-
-    // 5. Criar as tarefas FreeRTOS passando o ponteiro do MessageBuffer como argumento
-    // Tarefa do Sensor (Prioridade 5 - superior para garantir amostragem rigorosa)
-    xTaskCreate(sensor_task, "sensor_task", 4096, (void *)msg_buffer, 5, NULL);
-
-    // Tarefa de Logger do SD (Prioridade 3)
-    xTaskCreate(logger_task, "logger_task", 4096, (void *)msg_buffer, 3, NULL);
-
-    ESP_LOGI(TAG, "Tarefas criadas com sucesso.");
+    ESP_LOGI(TAG, "Sistema iniciado");
 }
