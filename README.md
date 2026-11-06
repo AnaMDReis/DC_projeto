@@ -1,4 +1,4 @@
-### Semana 2 (07/11 a 13/11)
+### Semana 2 (31/10 a 6/11)
 **Requisitos trabalhados:** RF7, RF8, RF9
 
 **Trabalho realizado.** Implementação do módulo de configuração, que lê o ficheiro JSON do microSD (`config.c`, `config.json`), desenvolvimento do servidor GATT BLE e escrita do ADR 003 em `docs/adr/`.

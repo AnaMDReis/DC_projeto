@@ -17,6 +17,6 @@
 | RNF2 | Tolerância a falhas de rede | não iniciado | |
 | RNF3 | Tempo de resposta adequado | não iniciado | |
 | RNF4 | Interface simples e intuitiva | não iniciado | |
-| RNF5 | Alteração de parâmetros sem necessidade de recompilação | não iniciado | |
-| RNF6 | Adoção de práticas de segurança robustas | não iniciado | |
+| RNF5 | Alteração de parâmetros sem necessidade de recompilação | em curso | |
+| RNF6 | Adoção de práticas de segurança robustas | em curso | |
 | RNF7 | Interfaces públicas e independência entre módulos | em curso | | 
