@@ -8,7 +8,7 @@
 #include "freertos/semphr.h"
 #include "host/ble_hs.h"
 
-static const char *TAG = "ECO_ESS_SVC";
+static const char *TAG = "GATT_ESS";
 
 /* Valores "desconhecido" do GATT Specification Supplement */
 #define ESS_TEMP_UNKNOWN ((int16_t)0x8000)
@@ -109,7 +109,7 @@ void gatt_ess_update(float temperature_c, float humidity_pct)
     ESP_LOGI(TAG, "Notificação BLE: temp=%ld hum=%ld (x0,01)", t, h);
 }
 
-void gat_ess_invalidate(void)
+void gatt_ess_invalidate(void)
 {
     if (s_mutex == NULL) {
         return;

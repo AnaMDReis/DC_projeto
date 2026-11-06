@@ -1,4 +1,14 @@
 {
   "config_version": 1,
-  "sampling": { "period_s": 10 }
+  "node_id": 1055,
+  "sampling": {
+    "period_s": 10
+  },
+  "wifi": {
+    "ssid": "",
+    "password": ""
+  },
+  "telemetry": {
+    "uri": "mqtt://localhost:1883"
+  }
 }

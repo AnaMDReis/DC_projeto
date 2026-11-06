@@ -1,19 +1,19 @@
-### Semana 1 (19/10 a 30/10)
-**Requisitos trabalhados:** RF1, RF3, RF4, RNF1, RNF7
+### Semana 2 (07/11 a 13/11)
+**Requisitos trabalhados:** RF7, RF8, RF9
 
-**Trabalho realizado.** Implementação da leitura I2C do DHT20 com verificação de CRC (`main/sensor/sensor.c`), que envia as amostras por Message Buffer para a tarefa de gravação no microSD (`main/storage/storage.c`). O armazenamento monta o cartão por SPI, grava as leituras em `leitura.txt` e reencaminha o log para `log.txt`. Desenvolvimento do controlo do LED RGB via RMT, com as cores do RF3. Escrita dos ADR 001 e 002 em `docs/adr/`.
+**Trabalho realizado.** Implementação do módulo de configuração, que lê o ficheiro JSON do microSD (`config.c`, `config.json`), desenvolvimento do servidor GATT BLE e escrita do ADR 003 em `docs/adr/`.
 
-**Decisões tomadas.** O mecanismo de comunicação da aquisição (Message Buffer) foi atribuído por sorteio, pelo que não constitui decisão do grupo. Decidimos que o envio da amostra é não bloqueante (timeout 0), para que um atraso na gravação no cartão nunca atrase a aquisição. Cartão por SPI com mutex e reencaminhamento de logs com timeout de 50 ms, registado em `docs/adr/ADR_002.md`. Comunicação com o sensor por I²C, registada em `docs/adr/ADR_001.md`. 
+**Decisões tomadas.** O módulo ESS recebe as amostras por `gatt_ess_update()` em vez de ler o sensor e cada serviço tem a sua função de inicialização. As características proprietárias exigem ligação cifrada e autenticada, a password não tem leitura e os valores levam um byte de versão de formato. Registado em `docs/adr/ADR_003.md`.
 
 **Dificuldades.**
-- Deadlock possível por reentrância no hook de logs (erros emitidos pelo sistema de ficheiros durante a escrita): resolvido, o hook deteta se a tarefa já detém o mutex e passa a esperar no máximo 50 ms.
-- Desmontagem do cartão com outra tarefa a escrever: resolvido, o `deinit_sd_card` adquire o mutex antes de desmontar e não o apaga.
-- Período de amostragem fixo a 1000 ms no `sensor_task`, em vez de vir do JSON (RF1, RF7): pendente.
+- As alterações recebidas por BLE só ficam em memória; falta gravá-las no microSD: pendente.
+- Enviar as medições do sensor para o BLE: pendente.
+- Período de amostragem fixo a 1000 ms no `sensor_task`, em vez de vir do JSON: resolvido
 
 **Verificações efetuadas.** Projeto compilado sem erros. Ainda não foram feitos testes funcionais em hardware nem medições.
 
-**Divisão de trabalho.** 125305: módulo de armazenamento em microSD (`storage.c`), ADR 001 e 002 e tabela de estado dos requisitos. 126541: aquisição do sensor DHT20 (`sensor.c`), controlo do LED RGB (`led_status.c`) e criação do diagrama ADR.
+**Divisão de trabalho.** 125305: módulo de configuração, JSON e atualização da tabela de estados e requisitos. 126541: módulos GATT e ADR 003.
 
-**Utilização de ferramentas de geração assistida.** Utilização de um assistente para revisão de código 
+**Utilização de ferramentas de geração assistida.** Utilização de um assistente para auxílio de escrita e revisão do código.
 
-**Trabalho previsto para a semana seguinte.** Ler o período de amostragem do JSON (módulo de configuração). Acrescentar timestamp e versão de formato aos ficheiros. Preparar a tarefa de rede e a interface BLE.
+**Trabalho previsto para a semana seguinte.** Gravar a configuração no microSD e testar os módulos no ESP.

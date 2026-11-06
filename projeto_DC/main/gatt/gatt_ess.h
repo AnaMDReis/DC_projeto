@@ -1,12 +1,5 @@
-#pragma once
-
-/*
- * gat_ess - Environmental Sensing Service (0x181A)  [RF8]
- *
- * Características: Temperature (0x2A6E) e Humidity (0x2A6F), leitura + notificação.
- * Este módulo NÃO depende do sensor, da rede, do storage ou da configuração (RNF7):
- * quem tiver amostras novas chama gat_ess_update().
- */
+#ifndef GAT_ESS_H
+#define GAT_ESS_H
 
 struct ble_gap_event;
 
@@ -22,3 +15,5 @@ void gatt_ess_invalidate(void);
 
 /* Opcional: apenas regista nos logs as subscrições do CCCD. */
 void gatt_ess_on_subscribe(const struct ble_gap_event *event);
+
+#endif

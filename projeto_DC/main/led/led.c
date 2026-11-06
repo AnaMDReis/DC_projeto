@@ -2,7 +2,7 @@
 #include "esp_log.h"
 #include "led_strip.h"
 
-static const char *TAG = "led_status";
+static const char *TAG = "LED";
 static led_strip_handle_t led_strip = NULL;
 
 #define LED_RGB_GPIO 8

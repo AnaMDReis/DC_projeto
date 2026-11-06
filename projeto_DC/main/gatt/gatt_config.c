@@ -1,5 +1,4 @@
 #include "gatt_config.h"
-#include "app_config.h"
 
 #include <string.h>
 
@@ -7,7 +6,7 @@
 #include "esp_log.h"
 #include "host/ble_hs.h"
 
-static const char *TAG = "ECO_CFG_SVC";
+static const char *TAG = "GATT_CONFIG";
 
 #define CFG_FMT_VERSION  0x01
 #define CFG_PERIOD_MIN   1
@@ -16,30 +15,31 @@ static const char *TAG = "ECO_CFG_SVC";
 #define CFG_PASS_MAX     64
 #define CFG_URI_MAX      127
 
-/* Serviço e características (E0C0DE00 .. E0C0DE04) */
+// Declaração dos UUIDs
 static ble_uuid128_t cfg_svc_uuid;
 static ble_uuid128_t cfg_period_uuid;
 static ble_uuid128_t cfg_ssid_uuid;
 static ble_uuid128_t cfg_pass_uuid;
 static ble_uuid128_t cfg_uri_uuid;
 
+// Handles das características do serviço
 static uint16_t cfg_period_handle;
 static uint16_t cfg_ssid_handle;
 static uint16_t cfg_pass_handle;
 static uint16_t cfg_uri_handle;
 
-/* Constrói E0C0DE0<idx>-0000-4000-8000-00000000XXXX em little-endian (formato NimBLE). */
+// Constrói os UUIDs
 static void build_uuid(ble_uuid128_t *u, uint16_t node_id, uint8_t idx)
 {
     const uint8_t v[16] = {
-        (uint8_t)(node_id & 0xFF), (uint8_t)(node_id >> 8), 0x00, 0x00, 0x00, 0x00, /* 00000000XXXX */
-        0x00, 0x80,                                                                  /* 8000 */
-        0x00, 0x40,                                                                  /* 4000 */
-        0x00, 0x00,                                                                  /* 0000 */
-        idx, 0xDE, 0xC0, 0xE0                                                        /* E0C0DE0x */
+        (uint8_t)(node_id & 0xFF), (uint8_t)(node_id >> 8), 0x00, 0x00, 0x00, 0x00,  // 00000000XXXX (little endian)
+        0x00, 0x80,                                                                  // 8000 
+        0x00, 0x40,                                                                  // 4000 
+        0x00, 0x00,                                                                  // 0000 
+        idx, 0xDE, 0xC0, 0xE0                                                        // E0C0DE0x 
     };
     u->u.type = BLE_UUID_TYPE_128;
-    memcpy(u->value, v, sizeof(v));
+    memcpy(u->value, v, sizeof(v));             // copiar os 16 bytes para o UUID
 }
 
 static void wipe(void *p, size_t n)

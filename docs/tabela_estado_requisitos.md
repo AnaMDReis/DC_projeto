@@ -8,9 +8,9 @@
 | RF4 | Registo das leituras e do log no microSD | em curso | |
 | RF5 | Publicação num servidor de telemetria remoto | não iniciado | |
 | RF6 | Controlo de brilho através de potenciómetro | não iniciado | |
-| RF7 | Configurações a partir de ficheiro JSON | não iniciado | |
-| RF8 | Serviço BLE environmental Sensing | não iniciado | |
-| RF9 | Serviço BLE de configuração | não iniciado | |
+| RF7 | Configurações a partir de ficheiro JSON | em curso | |
+| RF8 | Serviço BLE environmental Sensing | em curso | |
+| RF9 | Serviço BLE de configuração | em curso | |
 | RF10 | Provisionamento na ausência de rede | não iniciado | |
 | RF11 | Estratégia de redução de consumo | não iniciado | |
 | RNF1 | Distribuição por tarefas, sem bloqueio mútuo | em curso | |

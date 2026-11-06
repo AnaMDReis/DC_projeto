@@ -18,7 +18,7 @@
 #define DHT20_SENSOR_ADDR           0x38
 
 
-static const char *TAG = "sensor_module";
+static const char *TAG = "Sensor";
 static i2c_master_dev_handle_t dht20_dev_handle = NULL;
 static i2c_master_bus_handle_t i2c_bus_handle = NULL;
 
