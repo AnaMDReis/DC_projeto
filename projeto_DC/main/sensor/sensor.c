@@ -40,7 +40,7 @@ void init_dht20_i2c(void) {
     };
     ESP_ERROR_CHECK(i2c_master_bus_add_device(i2c_bus_handle, &dev_cfg, &dht20_dev_handle));
     vTaskDelay(pdMS_TO_TICKS(100));
-    ESP_LOGI(TAG, "Sensor DHT20 inicializado via I2C.");
+    ESP_LOGI(TAG, "DHT20 sensor initialized via I2C.");
 }
 
 static uint8_t calc_crc8(const uint8_t *data, size_t len) {
@@ -61,12 +61,12 @@ void sensor_task(void *arg) {
 
     while (1) {
         if (xTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(config_get_sample_period_s() * 1000)) == pdFALSE) {
-            ESP_LOGW(TAG, "Período da tarefa de sensor excedido!");
+            ESP_LOGW(TAG, "Sensor task period exceeded!");
         }
 
         uint8_t cmd[3] = {0xAC, 0x33, 0x00};
         if (i2c_master_transmit(dht20_dev_handle, cmd, sizeof(cmd), 100) != ESP_OK) {
-            ESP_LOGW(TAG, "Erro I2C ao enviar comando para DHT20");
+            ESP_LOGW(TAG, "I2C error sending command to DHT20");
             continue;
         }
 
@@ -74,12 +74,12 @@ void sensor_task(void *arg) {
 
         uint8_t rx_buf[7] = {0};
         if (i2c_master_receive(dht20_dev_handle, rx_buf, 7, 100) != ESP_OK || (rx_buf[0] & 0x80)) {
-            ESP_LOGW(TAG, "Erro ou sensor ocupado na leitura do DHT20");
+            ESP_LOGW(TAG, "DHT20 read error or sensor busy");
             continue;
         }
 
         if (calc_crc8(rx_buf, 6) != rx_buf[6]) {
-            ESP_LOGW(TAG, "Erro de CRC no DHT20");
+            ESP_LOGW(TAG, "DHT20 CRC error");
             continue;
         }
 
@@ -94,7 +94,7 @@ void sensor_task(void *arg) {
 
         size_t sent = xMessageBufferSend(msg_buffer, &sample, sizeof(sample_t), 0);
         if (sent != sizeof(sample_t)) {
-            ESP_LOGW(TAG, "Message Buffer cheio! Amostra descartada.");
+            ESP_LOGW(TAG, "Message Buffer full! Sample discarded.");
         }
     }
 }

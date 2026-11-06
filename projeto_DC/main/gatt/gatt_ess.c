@@ -71,10 +71,10 @@ static int ess_chr_access(uint16_t conn_handle, uint16_t attr_handle,
 
     int rc;
     if (attr_handle == temp_chr_val_handle) {
-        ESP_LOGI(TAG, "Leitura BLE Temperature: %d (x0,01 C)", temp);
+        ESP_LOGI(TAG, "BLE Temperature read: %d (x0.01 C)", temp);
         rc = os_mbuf_append(ctxt->om, &temp, sizeof(temp)); /* ESP32-C6 é little-endian */
     } else if (attr_handle == hum_chr_val_handle) {
-        ESP_LOGI(TAG, "Leitura BLE Humidity: %u (x0,01 %%)", hum);
+        ESP_LOGI(TAG, "BLE Humidity read: %u (x0.01 %%)", hum);
         rc = os_mbuf_append(ctxt->om, &hum, sizeof(hum));
     } else {
         return BLE_ATT_ERR_UNLIKELY;
@@ -96,7 +96,7 @@ void gatt_ess_update(float temperature_c, float humidity_pct)
     if (h >  65534) h =  65534;   /* 0xFFFF está reservado a "desconhecido" */
 
     if (xSemaphoreTake(s_mutex, pdMS_TO_TICKS(50)) != pdTRUE) {
-        ESP_LOGW(TAG, "Mutex ocupado: amostra BLE descartada");
+        ESP_LOGW(TAG, "Mutex busy: BLE sample discarded");
         return;
     }
     s_temp_centi = (int16_t)t;
@@ -106,7 +106,7 @@ void gatt_ess_update(float temperature_c, float humidity_pct)
     /* Apenas agenda o envio; a pilha invoca ess_chr_access na tarefa do host */
     ble_gatts_chr_updated(temp_chr_val_handle);
     ble_gatts_chr_updated(hum_chr_val_handle);
-    ESP_LOGI(TAG, "Notificação BLE: temp=%ld hum=%ld (x0,01)", t, h);
+    ESP_LOGI(TAG, "BLE notification: temp=%ld hum=%ld (x0.01)", t, h);
 }
 
 void gatt_ess_invalidate(void)
@@ -125,7 +125,7 @@ void gatt_ess_on_subscribe(const struct ble_gap_event *event)
 {
     if (event->subscribe.attr_handle == temp_chr_val_handle ||
         event->subscribe.attr_handle == hum_chr_val_handle) {
-        ESP_LOGI(TAG, "Subscrição ESS: attr=%d notify=%d",
+        ESP_LOGI(TAG, "ESS subscription: attr=%d notify=%d",
                  event->subscribe.attr_handle, event->subscribe.cur_notify);
     }
 }

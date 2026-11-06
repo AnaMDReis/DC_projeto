@@ -95,7 +95,7 @@ static int write_text(struct os_mbuf *om, uint16_t max_chars,
     esp_err_t e = setter(text);
 
     /* RNF6: nunca registar o valor, apenas a dimensão */
-    ESP_LOGI(TAG, "Escrita BLE %s: %u bytes%s", name, n, secret ? " (protegido)" : "");
+    ESP_LOGI(TAG, "BLE write %s: %u bytes%s", name, n, secret ? " (protected)" : "");
 
     wipe(buf, sizeof(buf));
     wipe(text, sizeof(text));
@@ -146,7 +146,7 @@ static int config_chr_access(uint16_t conn_handle, uint16_t attr_handle,
             if (period < CFG_PERIOD_MIN || period > CFG_PERIOD_MAX) {
                 return BLE_ATT_ERR_VALUE_NOT_ALLOWED;
             }
-            ESP_LOGI(TAG, "Escrita BLE período: %u s", period);
+            ESP_LOGI(TAG, "BLE period write: %u s", period);
             return esp_to_att(app_config_set_sample_period(period));
         }
         if (attr_handle == cfg_ssid_handle) {

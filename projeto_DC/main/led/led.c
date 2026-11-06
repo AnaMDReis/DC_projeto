@@ -25,7 +25,7 @@ void led_status_init(void) {
         // Define o estado inicial como NORMAL (Verde)
         led_status_set(ESTADO_NORMAL);
     } else {
-        ESP_LOGE(TAG, "Falha ao inicializar o LED RGB: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Failed to initialize the RGB LED: %s", esp_err_to_name(err));
     }
 }
 
@@ -40,25 +40,25 @@ void led_status_set(system_status_t status) {
         case ESTADO_NORMAL:
             // Verde 
             led_strip_set_pixel(led_strip, 0, 0, 10, 0);
-            ESP_LOGI(TAG, "Estado LED: NORMAL (Verde)");
+            ESP_LOGI(TAG, "LED status: NORMAL (Green)");
             break;
 
         case ESTADO_ERRO:
             // Vermelho 
             led_strip_set_pixel(led_strip, 0, 10, 0, 0);
-            ESP_LOGW(TAG, "Estado LED: ERRO (Vermelho)");
+            ESP_LOGW(TAG, "LED status: ERROR (Red)");
             break;
 
         case ESTADO_TRANSMISSAO:
             // Amarelo -> Vermelho + Verde 
             led_strip_set_pixel(led_strip, 0, 10, 10, 0);
-            ESP_LOGI(TAG, "Estado LED: TRANSMISSÃO (Amarelo)");
+            ESP_LOGI(TAG, "LED status: TRANSMISSION (Yellow)");
             break;
 
         case ESTADO_PROVISIONAMENTO:
             // Azul 
             led_strip_set_pixel(led_strip, 0, 0, 0, 10);
-            ESP_LOGI(TAG, "Estado LED: PROVISIONAMENTO (Azul)");
+            ESP_LOGI(TAG, "LED status: PROVISIONING (Blue)");
             break;
 
         default:

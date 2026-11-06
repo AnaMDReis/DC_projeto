@@ -19,7 +19,7 @@ static app_config_t s_cfg = {
 esp_err_t config_load(const char *path) {
     FILE *f = fopen(path, "r");
     if (!f) {
-        ESP_LOGW(TAG, "Ficheiro %s não encontrado, a usar valores por omissão", path);
+        ESP_LOGW(TAG, "File %s not found, using default values", path);
         return ESP_ERR_NOT_FOUND;
     }
 
@@ -40,7 +40,7 @@ esp_err_t config_load(const char *path) {
     cJSON *root = cJSON_Parse(buf);
     free(buf);
     if (!root) {
-        ESP_LOGW(TAG, "JSON inválido, a usar valores por omissão");
+        ESP_LOGW(TAG, "Invalid JSON, using default values");
         return ESP_ERR_INVALID_ARG;
     }
 
@@ -63,7 +63,7 @@ esp_err_t config_load(const char *path) {
         if (cJSON_IsNumber(p) && p->valueint >= CONFIG_PERIOD_MIN_S && p->valueint <= CONFIG_PERIOD_MAX_S) {
             s_cfg.sample_period_s = (uint32_t)p->valueint;
         } else {
-            ESP_LOGW(TAG, "period_s inválido ou fora de limites, a usar %d s", CONFIG_PERIOD_DEFAULT_S);
+            ESP_LOGW(TAG, "Invalid or out-of-range period_s, using %d s", CONFIG_PERIOD_DEFAULT_S);
         }
     }
 
@@ -94,7 +94,7 @@ esp_err_t config_load(const char *path) {
     }
 
     cJSON_Delete(root);
-    ESP_LOGI(TAG, "Configuração carregada. Node ID: %u, Período: %lu s", s_cfg.node_id, (unsigned long)s_cfg.sample_period_s);
+    ESP_LOGI(TAG, "Configuration loaded. Node ID: %u, Period: %lu s", s_cfg.node_id, (unsigned long)s_cfg.sample_period_s);
     return ESP_OK;
 }
 
