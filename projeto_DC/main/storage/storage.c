@@ -167,7 +167,7 @@ esp_err_t init_sd_card(void) {
         }
     
 
-    // CCaso ainda não exista, criar o ficheiro de logs antes de instalar o reencaminhamento
+    // Caso ainda não exista, criar o ficheiro de logs antes de instalar o reencaminhamento
     FILE *f = fopen(LOG_FILE_PATH, "a");
     if (f == NULL) {
         ESP_LOGE(TAG, "Failed to create the log file");

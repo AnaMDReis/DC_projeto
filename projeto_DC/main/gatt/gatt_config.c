@@ -50,7 +50,7 @@ static void wipe(void *p, size_t n)
     }
 }
 
-/* Lê o valor escrito (versão + payload) para buf. Usa OS_MBUF_PKTLEN: om_len só conta o 1.º buffer. */
+
 static int read_payload(struct os_mbuf *om, uint8_t *buf, uint16_t max, uint16_t *len)
 {
     uint16_t pkt = OS_MBUF_PKTLEN(om);
@@ -74,7 +74,7 @@ static int esp_to_att(esp_err_t e)
     return (e == ESP_ERR_INVALID_ARG) ? BLE_ATT_ERR_VALUE_NOT_ALLOWED : BLE_ATT_ERR_UNLIKELY;
 }
 
-/* Escrita de uma característica de texto: valida, copia, chama o setter e limpa o buffer. */
+// Escrita de uma característica de texto: valida, copia, chama o setter e limpa o buffer
 static int write_text(struct os_mbuf *om, uint16_t max_chars,
                       esp_err_t (*setter)(const char *), const char *name, bool secret)
 {
@@ -94,7 +94,7 @@ static int write_text(struct os_mbuf *om, uint16_t max_chars,
 
     esp_err_t e = setter(text);
 
-    /* RNF6: nunca registar o valor, apenas a dimensão */
+    // RNF6: nunca registar o valor, apenas a dimensão 
     ESP_LOGI(TAG, "BLE write %s: %u bytes%s", name, n, secret ? " (protected)" : "");
 
     wipe(buf, sizeof(buf));
@@ -127,7 +127,7 @@ static int config_chr_access(uint16_t conn_handle, uint16_t attr_handle,
             wipe(&cfg, sizeof(cfg));
             return BLE_ATT_ERR_UNLIKELY;
         }
-        wipe(&cfg, sizeof(cfg)); /* a struct pode conter a password */
+        wipe(&cfg, sizeof(cfg));                        // a struct pode conter a password
         return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
     }
 
@@ -165,7 +165,7 @@ static int config_chr_access(uint16_t conn_handle, uint16_t attr_handle,
     }
 }
 
-/* Cifrada + autenticada (passkey) em toda a escrita; leitura cifrada onde existe */
+
 #define CFG_RW_FLAGS (BLE_GATT_CHR_F_READ  | BLE_GATT_CHR_F_READ_ENC | \
                       BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHEN)
 #define CFG_WO_FLAGS (BLE_GATT_CHR_F_WRITE | BLE_GATT_CHR_F_WRITE_ENC | BLE_GATT_CHR_F_WRITE_AUTHEN)
@@ -180,7 +180,7 @@ static const struct ble_gatt_svc_def cfg_svcs[] = {
             { .uuid = &cfg_ssid_uuid.u,   .access_cb = config_chr_access,
               .flags = CFG_RW_FLAGS, .val_handle = &cfg_ssid_handle },
             { .uuid = &cfg_pass_uuid.u,   .access_cb = config_chr_access,
-              .flags = CFG_WO_FLAGS, .val_handle = &cfg_pass_handle },   /* RNF6: não legível */
+              .flags = CFG_WO_FLAGS, .val_handle = &cfg_pass_handle },   
             { .uuid = &cfg_uri_uuid.u,    .access_cb = config_chr_access,
               .flags = CFG_RW_FLAGS, .val_handle = &cfg_uri_handle },
             { 0 }

@@ -10,21 +10,21 @@
 
 static const char *TAG = "GATT_ESS";
 
-/* Valores "desconhecido" do GATT Specification Supplement */
+
 #define ESS_TEMP_UNKNOWN ((int16_t)0x8000)
 #define ESS_HUM_UNKNOWN  ((uint16_t)0xFFFF)
 
 static const ble_uuid16_t ess_svc_uuid  = BLE_UUID16_INIT(0x181A);
-static const ble_uuid16_t temp_chr_uuid = BLE_UUID16_INIT(0x2A6E); /* Temperature */
-static const ble_uuid16_t hum_chr_uuid  = BLE_UUID16_INIT(0x2A6F); /* Humidity    */
+static const ble_uuid16_t temp_chr_uuid = BLE_UUID16_INIT(0x2A6E);      // Temperatura
+static const ble_uuid16_t hum_chr_uuid  = BLE_UUID16_INIT(0x2A6F);      // Humidade 
 
 static uint16_t temp_chr_val_handle;
 static uint16_t hum_chr_val_handle;
 
-/* Última amostra válida, protegida por mutex (as funções de acesso nunca tocam no sensor) */
+// Última amostra válida, protegida por mutex (as funções de acesso nunca tocam no sensor)
 static SemaphoreHandle_t s_mutex;
-static int16_t  s_temp_centi = ESS_TEMP_UNKNOWN; /* 0,01 °C */
-static uint16_t s_hum_centi  = ESS_HUM_UNKNOWN;  /* 0,01 %  */
+static int16_t  s_temp_centi = ESS_TEMP_UNKNOWN; 
+static uint16_t s_hum_centi  = ESS_HUM_UNKNOWN;  
 
 static int ess_chr_access(uint16_t conn_handle, uint16_t attr_handle,
                           struct ble_gatt_access_ctxt *ctxt, void *arg);
@@ -52,7 +52,7 @@ static const struct ble_gatt_svc_def ess_defs[] = {
     { 0 }
 };
 
-/* Corre na tarefa do host: só lê memória, sem I2C nem I/O lento. */
+// Corre na tarefa do host: só lê memória, sem I2C nem I/O lento
 static int ess_chr_access(uint16_t conn_handle, uint16_t attr_handle,
                           struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
@@ -72,7 +72,7 @@ static int ess_chr_access(uint16_t conn_handle, uint16_t attr_handle,
     int rc;
     if (attr_handle == temp_chr_val_handle) {
         ESP_LOGI(TAG, "BLE Temperature read: %d (x0.01 C)", temp);
-        rc = os_mbuf_append(ctxt->om, &temp, sizeof(temp)); /* ESP32-C6 é little-endian */
+        rc = os_mbuf_append(ctxt->om, &temp, sizeof(temp)); 
     } else if (attr_handle == hum_chr_val_handle) {
         ESP_LOGI(TAG, "BLE Humidity read: %u (x0.01 %%)", hum);
         rc = os_mbuf_append(ctxt->om, &hum, sizeof(hum));
@@ -90,10 +90,10 @@ void gatt_ess_update(float temperature_c, float humidity_pct)
 
     long t = lroundf(temperature_c * 100.0f);
     long h = lroundf(humidity_pct * 100.0f);
-    if (t < -32767) t = -32767;   /* 0x8000 está reservado a "desconhecido" */
+    if (t < -32767) t = -32767;                      // 0x8000 está reservado a "desconhecido" 
     if (t >  32767) t =  32767;
     if (h <      0) h =      0;
-    if (h >  65534) h =  65534;   /* 0xFFFF está reservado a "desconhecido" */
+    if (h >  65534) h =  65534;                      // 0xFFFF está reservado a "desconhecido" 
 
     if (xSemaphoreTake(s_mutex, pdMS_TO_TICKS(50)) != pdTRUE) {
         ESP_LOGW(TAG, "Mutex busy: BLE sample discarded");
@@ -101,9 +101,9 @@ void gatt_ess_update(float temperature_c, float humidity_pct)
     }
     s_temp_centi = (int16_t)t;
     s_hum_centi  = (uint16_t)h;
-    xSemaphoreGive(s_mutex);   /* libertar ANTES de notificar */
+    xSemaphoreGive(s_mutex);                // libertar antes de notificar 
 
-    /* Apenas agenda o envio; a pilha invoca ess_chr_access na tarefa do host */
+    // Apenas agenda o envio, a pilha invoca ess_chr_access na tarefa do host
     ble_gatts_chr_updated(temp_chr_val_handle);
     ble_gatts_chr_updated(hum_chr_val_handle);
     ESP_LOGI(TAG, "BLE notification: temp=%ld hum=%ld (x0.01)", t, h);

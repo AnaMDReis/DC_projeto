@@ -7,11 +7,11 @@ static led_strip_handle_t led_strip = NULL;
 
 #define LED_RGB_GPIO 8
 
-// Inicializa o periférico do LED RGB no GPIO 8 através do periférico RMT.
+// Inicializa o periférico do LED RGB no GPIO 8 através do periférico RMT
 void led_status_init(void) {
     led_strip_config_t strip_config = {
         .strip_gpio_num = LED_RGB_GPIO,
-        .max_leds = 1, // Apenas 1 LED RGB na placa
+        .max_leds = 1,                      // Apenas 1 LED RGB na placa
     };
     
     led_strip_rmt_config_t rmt_config = {
@@ -35,7 +35,6 @@ void led_status_set(system_status_t status) {
         return;
     }
 
-    // Nota: Os valores RGB estão ajustados para brilho moderado (max: 255)
     switch (status) {
         case ESTADO_NORMAL:
             // Verde 
